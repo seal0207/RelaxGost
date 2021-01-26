@@ -15,13 +15,13 @@ raw_conf_path="/etc/gost/rawconf"
 #检测是否安装Gost
 check_status(){
     if test -a /etc/gost/gost -a /etc/systemd/system/gost.service -a /etc/gost/config.json;then
-        echo "------------------------------"
-        echo -e "--------${Green_font_prefix} Gost已安装~ ${Font_color_suffix}--------"
-        echo "------------------------------"
+        echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
+        echo -e "≡≡≡≡≡≡ ${Green_font_prefix} Gost已安装~ ${Font_color_suffix}≡≡≡≡≡≡"
+        echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
     else
-        echo "------------------------------"
-        echo -e "--------${Red_font_prefix} Gost未安装！${Font_color_suffix}---------"
-        echo "------------------------------"
+        echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
+        echo -e "≡≡≡≡≡≡ ${Red_font_prefix} Gost未安装！${Font_color_suffix}≡≡≡≡≡≡"
+        echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
     fi
 }
 
@@ -191,8 +191,12 @@ tcpudp(){
 #赋值
 eachconf_retrieve()
 {
+  a=${trans_conf%#*}
+  b=${trans_conf#*/}
   model=${trans_conf%%/*}
-
+  inport=${b%%#*}
+  ip=${a#*#}
+  outport=${trans_conf##*#}
 }
 
 #配置Gost转发规则
@@ -224,10 +228,10 @@ multiconflast() {
 #查看规则
 Check_Gost(){
 
-  echo -e "                      GOST 配置                        "
-  echo -e "--------------------------------------------------------"
-  echo -e "序号|方法\t    |本地端口\t|目的地地址:目的地端口"
-  echo -e "--------------------------------------------------------"
+  echo -e "\t\t\t\t\t\033[36m  \033[1mGost配置信息  \033[0m\t\t\t\t\t\t"
+  echo -e "\033[30m≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡\033[0m"
+  echo -e "\033[33m‖   序号 ‖ \t转发方式\t‖  流量进端口\t‖\t转发地址\t:\t流量出端口\t‖\033[0m"
+  echo -e "\033[30m≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡\033[0m"
 
   count_line=$(awk 'END{print NR}' $raw_conf_path)
   for ((i = 1; i <= $count_line; i++)); do
@@ -262,8 +266,8 @@ Check_Gost(){
       str=" socks5 "
     fi
 
-    echo -e " $i  |$str  |$s_port\t|$d_ip:$d_port"
-    echo -e "--------------------------------------------------------"
+    echo -e "\033[30m‖    $i   ‖\t$str\t‖\t$inport\t‖\t$ip\t:\t$outport\t\t\\033[30m‖"
+    echo -e "\033[30m≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡\033[0m"
   done
 }
 
@@ -340,20 +344,21 @@ echo "#             此脚本默认使用Gost版本为v2.11.1               #"
 echo "#            专为懒人小白打造,使用便捷,操作明了~            #"
 echo "#############################################################"
 echo -e "
- 当前版本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
- ${Green_font_prefix}0.${Font_color_suffix}  更新 Gost 脚本
- ${Green_font_prefix}1.${Font_color_suffix}  安装 Gost
- ${Green_font_prefix}2.${Font_color_suffix}  卸载 Gost
-——————————————
- ${Green_font_prefix}3.${Font_color_suffix}  启动 Gost
- ${Green_font_prefix}4.${Font_color_suffix}  停止 Gost
- ${Green_font_prefix}5.${Font_color_suffix}  重启 Gost
-——————————————
- ${Green_font_prefix}6.${Font_color_suffix}  添加 Gost 转发规则
- ${Green_font_prefix}7.${Font_color_suffix}  查看 Gost 转发规则
- ${Green_font_prefix}8.${Font_color_suffix}  删除 Gost 转发规则
- ${Green_font_prefix}9.${Font_color_suffix}  添加 Gost 重启任务
- ${Green_font_prefix}10.${Font_color_suffix} 退出 Gost 脚本"
+≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+‖ 当前版本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}      ‖
+‖ ${Green_font_prefix}0.${Font_color_suffix}  更新 Gost 脚本     ‖
+‖ ${Green_font_prefix}1.${Font_color_suffix}  安装 Gost          ‖   
+‖ ${Green_font_prefix}2.${Font_color_suffix}  卸载 Gost          ‖
+≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+‖ ${Green_font_prefix}3.${Font_color_suffix}  启动 Gost          ‖
+‖ ${Green_font_prefix}4.${Font_color_suffix}  停止 Gost          ‖
+‖ ${Green_font_prefix}5.${Font_color_suffix}  重启 Gost          ‖
+≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡     
+‖ ${Green_font_prefix}6.${Font_color_suffix}  添加 Gost 转发规则 ‖
+‖ ${Green_font_prefix}7.${Font_color_suffix}  查看 Gost 转发规则 ‖
+‖ ${Green_font_prefix}8.${Font_color_suffix}  删除 Gost 转发规则 ‖
+‖ ${Green_font_prefix}9.${Font_color_suffix}  添加 Gost 重启任务 ‖
+‖ ${Green_font_prefix}10.${Font_color_suffix} 退出 Gost 脚本     ‖"
  check_status
 
 read -p " 请输入数字后[0-10] 按回车键:" num
