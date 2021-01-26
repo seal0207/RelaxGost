@@ -46,12 +46,12 @@ WantedBy=multi-user.target' > /etc/systemd/system/gost.service
 
 echo '
 {
-    \"Debug\": true,
-    \"Retries\": 0,
-    \"ServeNodes\": [
-        \"udp://127.0.0.1:8848\"
+    "Debug": true,
+    "Retries": 0,
+    "ServeNodes": [
+        "udp://127.0.0.1:8848"
     ]
-} ' > /etc/gost/config.json
+}' > /etc/gost/config.json
 }
 
 #检测安装是否成功
@@ -63,43 +63,264 @@ Success_Gost(){
     else
         echo -e "-------${Red_font_prefix}Gost没有安装成功，请检查你的网络环境！${Font_color_suffix}-------"
         echo "------------------------------"
-        `rm -rf "$(pwd)"/gost`
-        `rm -rf "$(pwd)"/gost.service`
-        `rm -rf "$(pwd)"/config.json`
+        `rm -rf /etc/gost`
+        `rm -rf /etc/systemd/system/gost.service`
+        `rm -rf /etc/gostconfig.json`
     fi
 sleep 3s
 start_menu
 }
+
 #安装Gost
 Install_Gost(){
-  apt-get update -y && apt-get install wget -y && apt-get install gzip -y
+  'apt-get update -y && apt-get install wget -y && apt-get install gzip -y'
   if test -a /etc/gost;then
-  'rmdir -f /etc/gost'
-  'mkdir /etc/gost'   
-  wget -N --no-check-certificate https://github.com/seal0207/RelaxGost/raw/main/gost-linux-amd64-2.11.1.gz && gzip -d gost-linux-amd64-2.11.1.gz && mv gost-linux-amd64-2.11.1 /etc/gost/gost && chmod +x /etc/gost/gost &&chmod +x /etc/gost/config.json
+  rm -rf /etc/gost
+  mkdir /etc/gost
+  wget -N --no-check-certificate https://github.com/seal0207/RelaxGost/raw/main/gost-linux-amd64-2.11.1.gz && gzip -d gost-linux-amd64-2.11.1.gz && mv gost-linux-amd64-2.11.1 /etc/gost/gost && chmod +x /etc/gost/gost
   Service_Config_Gost
+  chmod +x /etc/gost/config.json
   Success_Gost
-  'systemctl enable --now gost'
+  systemctl enable --now gost
   else
-  'mkdir /etc/gost'   
-  wget -N --no-check-certificate https://github.com/ginuerzh/gost/releases/download/v2.11.1/gost-linux-amd64-2.11.1.gz && gzip -d gost-linux-amd64-2.11.1.gz && mv gost-linux-amd64-2.11.1 /etc/gost && chmod +x gost
+  mkdir /etc/gost 
+  wget -N --no-check-certificate https://github.com/seal0207/RelaxGost/raw/main/gost-linux-amd64-2.11.1.gz && gzip -d gost-linux-amd64-2.11.1.gz && mv gost-linux-amd64-2.11.1 /etc/gost/gost && chmod +x /etc/gost/gost
   Service_Config_Gost
+  chmod +x /etc/gost/config.json
   Success_Gost
-  'systemctl enable --now gost'
+  systemctl enable --now gost
   fi
 }
 
+#卸载Gost
+Uninstall_Gost(){
+    'systemctl stop gost'
+    `rm -rf /etc/gost`
+    `rm -rf /etc/systemd/system/gost.service`
+    echo "------------------------------"
+    echo -e "-------${Green_font_prefix} Gost卸载成功! ${Font_color_suffix}-------"
+    echo "------------------------------"
+    sleep 2s
+    start_menu
+}
+
+#启动Gost
+Start_Gost(){
+    if test -a /etc/gost/gost -a /etc/systemd/system/gost.service -a /etc/gost/config.json;then
+    `systemctl start gost`
+    echo "------------------------------"
+    echo -e "-------${Green_font_prefix} Gost启动成功! ${Font_color_suffix}-------"
+    echo "------------------------------"
+    sleep 3s
+    else
+    echo -e "${Red_font_prefix} 你装都没装你启动你奶奶个腿~！ ${Font_color_suffix}"
+    sleep 3s
+    fi
+    start_menu
+}
+
+#停止Gost
+Stop_Gost(){
+    if test -a /etc/gost/gost -a /etc/systemd/system/gost.service -a /etc/gost/config.json;then
+    `systemctl stop gost`
+    echo "------------------------------"
+    echo -e "-------${Green_font_prefix} Gost启动成功! ${Font_color_suffix}-------"
+    echo "------------------------------"
+    sleep 3s
+    else
+    echo -e "${Red_font_prefix} 你装都没装你停止你奶奶个腿~！ ${Font_color_suffix}"
+    sleep 3s
+    fi
+    start_menu
+}
+
+#重启Gost
+Restart_Gost(){
+    if test -a /etc/gost/gost -a /etc/systemd/system/gost.service -a /etc/gost/config.json;then
+    `systemctl restart gost`
+    echo "------------------------------"
+    echo -e "-------${Green_font_prefix} Gost重启成功! ${Font_color_suffix}-------"
+    echo "------------------------------"
+    sleep 3s
+    else
+    echo -e "${Red_font_prefix} 你装都没装你重启你奶奶个腿~！ ${Font_color_suffix}"
+    sleep 3s
+    fi
+    start_menu
+}
+
+#写入查询配置
+Write_rawconf() {
+  echo $model"/""$tcpudp_outport""#""$tcpudp_ip""#""$tcpudp_inport" >> $raw_conf_path
+}
+
+#tcpudp转发
+tcpudp(){
+  a=0
+  b=65535
+  clear
+  echo -e "#############################################################"
+  echo -e "#    1.需要进行流量转的发本机端口(说白了就是你的梯子端口):  #"
+  echo -e "#############################################################"
+  read -p "请输入端口: " tcpudp_outport
+  if  [ $tcpudp_outport -gt $a ] && [ $tcpudp_outport -le $b ]; then
+  clear
+  echo -e "#############################################################"
+  echo -e "#    2.本机IP地址,可以是本机内网外地址，默认127.0.0.1       #"
+  echo -e "#############################################################"
+  read -p "请输入本机地址(默认:127.0.0.1) : " tcpudp_ip
+  [ -z "${tcpudp_ip}" ]  && tcpudp_ip=127.0.0.1
+  clear
+  echo -e "#############################################################"
+  echo -e "#    3.对选项1进行流量转发的端口:                           #"
+  echo -e "#############################################################"
+  read -p "请输入端口: " tcpudp_inport
+  Write_rawconf
+  echo -e "${Green_font_prefix} 添加成功！ ${Font_color_suffix}"
+  if [ $tcpudp_inport -gt $a ] && [ $tcpudp_inport -le $b ]; then
+  sleep 2s
+  start_menu
+  fi
+  else
+  echo -e "${Red_font_prefix} 输入错误请重新输入！ ${Font_color_suffix}"
+  sleep 2s
+  tcpudp
+  fi
+}
+
+#赋值
+eachconf_retrieve()
+{
+  model=${trans_conf%%/*}
+
+}
+
+#配置Gost转发规则
+start_conf(){
+echo "{
+    \"Debug\": true,
+    \"Retries\": 0,
+    \"ServeNodes\": [" >> $gost_conf_path
+}
+multiconfstart() {
+  echo "        {
+            \"Retries\": 0,
+            \"ServeNodes\": [" >>$gost_conf_path
+}
+conflast() {
+  echo "    ]
+}" >>$gost_conf_path
+}
+multiconflast() {
+  if [ $i -eq $count_line ]; then
+    echo "            ]
+        }" >>$gost_conf_path
+  else
+    echo "            ]
+        }," >>$gost_conf_path
+  fi
+}
+
+#查看规则
+Check_Gost(){
+
+  echo -e "                      GOST 配置                        "
+  echo -e "--------------------------------------------------------"
+  echo -e "序号|方法\t    |本地端口\t|目的地地址:目的地端口"
+  echo -e "--------------------------------------------------------"
+
+  count_line=$(awk 'END{print NR}' $raw_conf_path)
+  for ((i = 1; i <= $count_line; i++)); do
+    trans_conf=$(sed -n "${i}p" $raw_conf_path)
+    eachconf_retrieve
+
+    if [ "$model" == "tcpudp" ]; then
+      str="不加密中转"
+    elif [ "$model" == "encrypttls" ]; then
+      str=" tls隧道 "
+    elif [ "$model" == "encryptws" ]; then
+      str="  ws隧道 "
+    elif [ "$model" == "encryptwss" ]; then
+      str=" wss隧道 "
+    elif [ "$model" == "peerno" ]; then
+      str=" 不加密均衡负载 "
+    elif [ "$model" == "peertls" ]; then
+      str=" tls隧道均衡负载 "
+    elif [ "$model" == "peerws" ]; then
+      str="  ws隧道均衡负载 "
+    elif [ "$modelt" == "peerwss" ]; then
+      str=" wss隧道均衡负载 "
+    elif [ "$model" == "decrypttls" ]; then
+      str=" tls解密 "
+    elif [ "$model" == "decryptws" ]; then
+      str="  ws解密 "
+    elif [ "$model" == "decryptwss" ]; then
+      str=" wss解密 "
+    elif [ "$model" == "ss" ]; then
+      str="   ss   "
+    elif [ "$model" == "socks" ]; then
+      str=" socks5 "
+    fi
+
+    echo -e " $i  |$str  |$s_port\t|$d_ip:$d_port"
+    echo -e "--------------------------------------------------------"
+  done
+}
+
+#选择转发方式
+Choice_Rules(){
+  clear
+  echo -e "#############################${Green_font_prefix}  请选择转发方式: ${Font_color_suffix}############################"
+  echo -e "#####################################"  "#####################################"
+  echo -e "#  1. tcp+udp流量转发, 不带加密     #"  "#  2. 隧道流量转发                  #" 
+  echo -e "#  说明:类似iptables,在中转机执行   #"  "#  说明:该选项在落地机执行          #"
+  echo -e "#####################################"  "#####################################"
+  echo -e "#####################################"  "#####################################"
+  echo -e "#  3. 隧道流量二次转发              #"  "#  4. 一键安装ss/socks5代理         #" 
+  echo -e "#  说明:该选项在中转机执行          #"  "#  说明:使用gost内置的代理协议      #"
+  echo -e "#####################################"  "#####################################"
+  echo -e "###########################################################################" 
+  echo -e "#                      5. 进阶：多落地均衡负载                            #"                   
+  echo -e "#                    说明: 支持各种加密方式的简单均衡负载                 #"
+  echo -e "###########################################################################" 
+  read -p "请输入数字[1-5]选择模式: " nummodel
+  if [ "$nummodel" == "1" ]; then
+    model="tcpudp"
+    tcpudp
+  elif [ "$nummodel" == "2" ]; then
+    model="outgost"
+    outgost
+  elif [ "$nummodel" == "3" ]; then
+    model="ingost"
+    ingost
+  elif [ "$nummodel" == "4" ]; then
+    model="ss_socks5"
+    ss_socks5
+  elif [ "$nummodel" == "5" ]; then
+    model="Load_Balancing"
+    Load_Balancing
+  else
+    echo -e "${Red_font_prefix} 输入错误，请重新输入！${Font_color_suffix}"
+    sleep 2s
+    Choice_Rules
+  fi
+}
+
+#添加Gost规则
+Add_Gost(){
+Choice_Rules
+}
 #更新脚本
 Update_Shell(){
 	echo -e "当前版本为 [ ${sh_ver} ]，开始检测最新版本..."
-	sh_new_ver=$(wget --no-check-certificate -qO- "https://raw.githubusercontent.com/seal0207/RelaxGost/main/realxgost.sh"|grep 'sh_ver="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1)
+	sh_new_ver=$(wget --no-check-certificate -qO- "https://raw.githubusercontent.com/seal0207/RelaxGost/main/relaxgost.sh"|grep 'sh_ver="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1)
 	[[ -z ${sh_new_ver} ]] && echo -e "${Error} 检测最新版本失败 !" && start_menu
 	if [[ ${sh_new_ver} != ${sh_ver} ]]; then
 		echo -e "发现新版本[ ${sh_new_ver} ]，是否更新？[Y/n]"
 		read -p "(默认: y):" yn
 		[[ -z "${yn}" ]] && yn="y"
 		if [[ ${yn} == [Yy] ]]; then
-			wget -N --no-check-certificate https://raw.githubusercontent.com/seal0207/RelaxGost/main/realxgost.sh && chmod +x realxgost.sh
+			wget -N --no-check-certificate https://raw.githubusercontent.com/seal0207/RelaxGost/main/relaxgost.sh && chmod +x relaxgost.sh.sh
 			echo -e "脚本已更新为最新版本[ ${sh_new_ver} ] !"
 		else
 			echo && echo "	已取消..." && echo
@@ -172,7 +393,7 @@ case "$num" in
 	;;
 	*)	
 	clear
-	echo -e "${Error}:请输入正确数字 [1-6] 按回车键"
+	echo -e "${Error}:请输入正确数字 [0-10] 按回车键"
 	sleep 2s
 	start_menu
 	;;
