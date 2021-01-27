@@ -182,7 +182,7 @@ tcpudp(){
   systemctl restart gost
   echo -e "${Green_font_prefix} 添加成功！ ${Font_color_suffix}"
   sleep 2s
-  start_menu
+  Check_Gost
   fi
   else
   echo -e "${Red_font_prefix} 输入错误请重新输入！ ${Font_color_suffix}"
@@ -215,7 +215,7 @@ gostoutconf(){
   systemctl restart gost
   echo -e "${Green_font_prefix} 添加成功！ ${Font_color_suffix}"
   sleep 2s
-  start_menu
+  Check_Gost
   fi
   else
   echo -e "${Red_font_prefix} 输入错误请重新输入！ ${Font_color_suffix}"
@@ -252,7 +252,7 @@ gostinconf(){
   systemctl restart gost
   echo -e "${Green_font_prefix} 添加成功！ ${Font_color_suffix}"
   sleep 2s
-  start_menu
+  Check_Gost
   fi
   else
   echo -e "${Red_font_prefix} 输入错误请重新输入！ ${Font_color_suffix}"
@@ -636,7 +636,7 @@ Check_Gost(){
 
   echo -e "\t\t\t\t\t\033[36m  \033[1mGost配置信息  \033[0m\t\t\t\t\t\t"
   echo -e "\033[30m≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡\033[0m"
-  echo -e "\033[33m‖   序号 ‖ \t转发方式\t‖    本地端口\t‖\t转发地址\t:\t远程端口\t‖\033[0m"
+  echo -e "\033[33m‖   序号 ‖\t转发方式\t‖    本地端口\t‖\t\t转发地址:远程端口\033[0m"
   echo -e "\033[30m≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡\033[0m"
 
   count_line=$(awk 'END{print NR}' $raw_conf_path)
@@ -647,25 +647,25 @@ Check_Gost(){
     if [ "$model" == "tcpudp" ]; then
       str="不加密中转"
     elif [ "$model" == "tls" ]; then
-      str="tls隧道加密模式"
+      str="tls隧道加密"
     elif [ "$model" == "ws" ]; then
-      str="ws隧道加密模式"
+      str="ws隧道加密"
     elif [ "$model" == "wss" ]; then
-      str="wss隧道加密模式"
+      str="wss隧道加密"
     elif [ "$model" == "mws" ]; then
-      str="mws隧道加密模式"
+      str="mws隧道加密"
     elif [ "$model" == "mwss" ]; then
-      str="mwss隧道加密模式"
+      str="mwss隧道加密"
     elif [ "$model" == "relaytls" ]; then
-      str="relay+tls隧道加密模式"
+      str="relay+tls加密"
     elif [ "$model" == "relayws" ]; then
-      str="relay+ws隧道加密模式"
+      str="relay+ws加密"
     elif [ "$model" == "relaywss" ]; then
-      str="relay+wss隧道加密模式"
+      str="relay+wss加密"
     elif [ "$model" == "relaymws" ]; then
-      str="relay+mws隧道加密模式"
+      str="relay+mws加密"
     elif [ "$model" == "relaymwss" ]; then
-      str="relay+mwss隧道加密模式"           
+      str="relay+mwss加密"           
     elif [ "$model" == "peerno" ]; then
       str="不加密均衡负载 "
     elif [ "$model" == "peertls" ]; then
@@ -700,7 +700,7 @@ Check_Gost(){
       str="socks5 "
     fi
 
-    echo -e "\033[30m‖    $i   ‖\t$str\t‖\t$inport\t‖\t$ip\t\t:\t  $outport\t\t\\033[30m‖"
+    echo -e "\033[30m‖    $i   ‖\t$str\t‖\t$inport\t‖\t\t$ip:$outport\\033[30m"
     echo -e "\033[30m≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡\033[0m"
   done
   read -p "输入任意键按回车返回主菜单"
