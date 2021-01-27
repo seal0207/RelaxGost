@@ -73,18 +73,17 @@ start_menu
 
 #安装Gost
 Install_Gost(){
-  'apt-get update -y && apt-get install wget -y && apt-get install gzip -y'
   if test -a /etc/gost;then
   rm -rf /etc/gost
   mkdir /etc/gost
-  wget -N --no-check-certificate https://github.com/seal0207/RelaxGost/raw/main/gost-linux-amd64-2.11.1.gz && gzip -d gost-linux-amd64-2.11.1.gz && mv gost-linux-amd64-2.11.1 /etc/gost/gost && chmod +x /etc/gost/gost
+  wget --no-check-certificate https://gotunnel.oss-cn-shenzhen.aliyuncs.com/gost-linux-amd64-2.11.1.gz && gzip -d gost-linux-amd64-2.11.1.gz && mv gost-linux-amd64-2.11.1 /etc/gost/gost && chmod +x /etc/gost/gost
   Service_Config_Gost
   chmod +x /etc/gost/config.json
   Success_Gost
   systemctl enable --now gost
   else
   mkdir /etc/gost 
-  wget -N --no-check-certificate https://github.com/seal0207/RelaxGost/raw/main/gost-linux-amd64-2.11.1.gz && gzip -d gost-linux-amd64-2.11.1.gz && mv gost-linux-amd64-2.11.1 /etc/gost/gost && chmod +x /etc/gost/gost
+  wget --no-check-certificate https://gotunnel.oss-cn-shenzhen.aliyuncs.com/gost-linux-amd64-2.11.1.gz && gzip -d gost-linux-amd64-2.11.1.gz && mv gost-linux-amd64-2.11.1 /etc/gost/gost && chmod +x /etc/gost/gost
   Service_Config_Gost
   chmod +x /etc/gost/config.json
   Success_Gost
@@ -97,9 +96,9 @@ Uninstall_Gost(){
     'systemctl stop gost'
     `rm -rf /etc/gost`
     `rm -rf /etc/systemd/system/gost.service`
-    echo "------------------------------"
-    echo -e "-------${Green_font_prefix} Gost卸载成功! ${Font_color_suffix}-------"
-    echo "------------------------------"
+        echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
+        echo -e "≡≡≡≡≡≡ ${Green_font_prefix} Gost已卸载~ ${Font_color_suffix}≡≡≡≡≡≡"
+        echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
     sleep 2s
     start_menu
 }
@@ -108,9 +107,9 @@ Uninstall_Gost(){
 Start_Gost(){
     if test -a /etc/gost/gost -a /etc/systemd/system/gost.service -a /etc/gost/config.json;then
     `systemctl start gost`
-    echo "------------------------------"
-    echo -e "-------${Green_font_prefix} Gost启动成功! ${Font_color_suffix}-------"
-    echo "------------------------------"
+        echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
+        echo -e "≡≡≡≡≡≡ ${Green_font_prefix} Gost已启动~ ${Font_color_suffix}≡≡≡≡≡≡"
+        echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
     sleep 3s
     else
     echo -e "${Red_font_prefix} 你装都没装你启动你奶奶个腿~！ ${Font_color_suffix}"
@@ -123,9 +122,9 @@ Start_Gost(){
 Stop_Gost(){
     if test -a /etc/gost/gost -a /etc/systemd/system/gost.service -a /etc/gost/config.json;then
     `systemctl stop gost`
-    echo "------------------------------"
-    echo -e "-------${Green_font_prefix} Gost启动成功! ${Font_color_suffix}-------"
-    echo "------------------------------"
+        echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
+        echo -e "≡≡≡≡≡≡ ${Green_font_prefix} Gost已停止~ ${Font_color_suffix}≡≡≡≡≡≡"
+        echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
     sleep 3s
     else
     echo -e "${Red_font_prefix} 你装都没装你停止你奶奶个腿~！ ${Font_color_suffix}"
@@ -138,9 +137,9 @@ Stop_Gost(){
 Restart_Gost(){
     if test -a /etc/gost/gost -a /etc/systemd/system/gost.service -a /etc/gost/config.json;then
     `systemctl restart gost`
-    echo "------------------------------"
-    echo -e "-------${Green_font_prefix} Gost重启成功! ${Font_color_suffix}-------"
-    echo "------------------------------"
+        echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
+        echo -e "≡≡≡≡≡≡ ${Green_font_prefix} Gost已重启~ ${Font_color_suffix}≡≡≡≡≡≡"
+        echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
     sleep 3s
     else
     echo -e "${Red_font_prefix} 你装都没装你重启你奶奶个腿~！ ${Font_color_suffix}"
@@ -166,7 +165,7 @@ tcpudp(){
   if  [ $tcpudp_outport -gt $a ] && [ $tcpudp_outport -le $b ]; then
   clear
   echo -e "#############################################################"
-  echo -e "#    2.本机IP地址,可以是本机内网外地址，默认127.0.0.1       #"
+  echo -e "#    2.输入IP地址,可以是本机内网外地址，默认127.0.0.1       #"
   echo -e "#############################################################"
   read -p "请输入本机地址(默认:127.0.0.1) : " tcpudp_ip
   [ -z "${tcpudp_ip}" ]  && tcpudp_ip=127.0.0.1
@@ -175,9 +174,14 @@ tcpudp(){
   echo -e "#    3.对选项1进行流量转发的端口:                           #"
   echo -e "#############################################################"
   read -p "请输入端口: " tcpudp_inport
-  Write_rawconf
-  echo -e "${Green_font_prefix} 添加成功！ ${Font_color_suffix}"
   if [ $tcpudp_inport -gt $a ] && [ $tcpudp_inport -le $b ]; then
+  Write_rawconf
+  rm -rf /etc/gost/config.json
+  Conf_start
+  Set_Config
+  conflast
+  systemctl restart gost
+  echo -e "${Green_font_prefix} 添加成功！ ${Font_color_suffix}"
   sleep 2s
   start_menu
   fi
@@ -186,6 +190,42 @@ tcpudp(){
   sleep 2s
   tcpudp
   fi
+}
+
+outgost(){
+  clear
+  echo -e "#############################################################"
+  echo -e "#\t\t    ${Green_font_prefix}请 选 择 隧 道 协 议${Font_color_suffix}\t\t    #"
+  echo -e "#  标 准 隧道协议：  1.TLS 2.WS 3.WSS 4.MWS 5.MWSS          #"
+  echo -e "#  Relay+隧道协议：  6.TLS 7.WS 8.WSS 9.MWS 10.MWSS         #"    
+  echo -e "#############################################################"
+  read -p "请输入数字: " numoutgost
+  if [ "$numoutgost" == "1" ]; then
+    model="tls"
+  elif [ "$numoutgost" == "2" ]; then
+    model="ws"
+  elif [ "$numoutgost" == "3" ]; then
+    model="wss"
+  elif [ "$numoutgost" == "4" ]; then
+    model="mws"
+  elif [ "$numoutgost" == "5" ]; then
+    model="mwss"
+  elif [ "$numoutgost" == "6" ]; then
+    model="relaytls"
+  elif [ "$numoutgost" == "7" ]; then
+    model="relayws"
+  elif [ "$numoutgost" == "8" ]; then
+    model="relaywss"
+  elif [ "$numoutgost" == "9" ]; then
+    model="relaywss"    
+  elif [ "$numoutgost" == "10" ]; then
+    model="relaymwss"      
+  else
+    echo -e "${Red_font_prefix}输入错误，请重新输入！${Font_color_suffix}"
+    sleep 2s
+    outgost
+  fi
+  tcpudp
 }
 
 #赋值
@@ -200,7 +240,7 @@ eachconf_retrieve()
 }
 
 #配置Gost转发规则
-start_conf(){
+Conf_start(){
 echo "{
     \"Debug\": true,
     \"Retries\": 0,
@@ -225,6 +265,253 @@ multiconflast() {
   fi
 }
 
+#功能
+method() {
+  if [ $i -eq 1 ]; then
+    if [ "$model" == "tcpudp" ]; then
+      echo "        \"tcp://:$inport/$ip:$outport\",
+        \"udp://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "peerno" ]; then
+      echo "        \"tcp://:$inport?ip=/root/$ip.txt&strategy=$outport\",
+        \"udp://:$inport?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+    elif [ "$model" == "tls" ]; then
+      echo "        \"tcp://:$inport\",
+        \"udp://:$inport\"
+    ],
+    \"ChainNodes\": [
+        \"tls://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "ws" ]; then
+      echo "        \"tcp://:$inport\",
+    	\"udp://:$inport\"
+	],
+	\"ChainNodes\": [
+    	\"ws://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "wss" ]; then
+      echo "        \"tcp://:$inport\",
+		\"udp://:$inport\"
+	],
+	\"ChainNodes\": [
+		\"wss://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "mws" ]; then
+      echo "        \"tcp://:$inport\",
+		\"udp://:$inport\"
+	],
+	\"ChainNodes\": [
+		\"mws://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "mwss" ]; then
+      echo "        \"tcp://:$inport\",
+		\"udp://:$inport\"
+	],
+	\"ChainNodes\": [
+		\"mwss://$ip:$outport\"" >>$gost_conf_path
+
+    elif [ "$model" == "relaytls" ]; then
+      echo "        \"tcp://:$inport\",
+        \"udp://:$inport\"
+    ],
+    \"ChainNodes\": [
+        \"relay+tls://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "relayws" ]; then
+      echo "        \"tcp://:$inport\",
+    	\"udp://:$inport\"
+	],
+	\"ChainNodes\": [
+    	\"relay+ws://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "relaywss" ]; then
+      echo "        \"tcp://:$inport\",
+		\"udp://:$inport\"
+	],
+	\"ChainNodes\": [
+		\"relay+wss://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "relaymws" ]; then
+      echo "        \"tcp://:$inport\",
+		\"udp://:$inport\"
+	],
+	\"ChainNodes\": [
+		\"relay+mws://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "relaymwss" ]; then
+      echo "        \"tcp://:$inport\",
+		\"udp://:$inport\"
+	],
+	\"ChainNodes\": [
+		\"relay+mwss://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "peertls" ]; then
+      echo "        \"tcp://:$inport\",
+    	\"udp://:$inport\"
+	],
+	\"ChainNodes\": [
+    	\"relay+tls://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+    elif [ "$model" == "peerws" ]; then
+      echo "        \"tcp://:$inport\",
+    	\"udp://:$inport\"
+	],
+	\"ChainNodes\": [
+    	\"relay+ws://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+    elif [ "$model" == "peerwss" ]; then
+      echo "        \"tcp://:$inport\",
+    	\"udp://:$inport\"
+	],
+	\"ChainNodes\": [
+    	\"relay+wss://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+    elif [ "$model" == "tls" ]; then
+      echo "        \"tls://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "ws" ]; then
+      echo "        \"ws://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "wss" ]; then
+      echo "        \"wss://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "mws" ]; then
+      echo "        \"mws://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "mwss" ]; then
+      echo "        \"mwss://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "relaytls" ]; then
+      echo "        \"relay+tls://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "relayws" ]; then
+      echo "        \"relay+ws://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "relaywss" ]; then
+      echo "        \"relay+wss://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "relaymws" ]; then
+      echo "        \"relay+mws://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "relaymwss" ]; then
+      echo "        \"relay+mwss://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "ss" ]; then
+      echo "        \"ss://$ip:$inport@:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "socks" ]; then
+      echo "        \"socks5://$ip:$inport@:$outport\"" >>$gost_conf_path
+    else
+      echo -e"${Red_font_prefix}配置发生错误！${Font_color_suffix}"
+    fi
+  elif [ $i -gt 1 ]; then
+    if [ "$model" == "tcpudp" ]; then
+      echo "                \"tcp://:$inport/$ip:$outport\",
+                \"udp://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "peerno" ]; then
+      echo "                \"tcp://:$inport?ip=/root/$ip.txt&strategy=$outport\",
+                \"udp://:$inport?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+    elif [ "$model" == "tls" ]; then
+      echo "                \"tcp://:$inport\",
+                \"udp://:$inport\"
+            ],
+            \"ChainNodes\": [
+                \"tls://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "ws" ]; then
+      echo "                \"tcp://:$inport\",
+	            \"udp://:$inport\"
+	        ],
+	        \"ChainNodes\": [
+	            \"ws://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "wss" ]; then
+      echo "                \"tcp://:$inport\",
+		        \"udp://:$inport\"
+		    ],
+		    \"ChainNodes\": [
+		        \"wss://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "mws" ]; then
+      echo "                \"tcp://:$inport\",
+		        \"udp://:$inport\"
+		    ],
+		    \"ChainNodes\": [
+		        \"mws://$ip:$outport\"" >>$gost_conf_path	
+    elif [ "$model" == "mwss" ]; then
+      echo "                \"tcp://:$inport\",
+		        \"udp://:$inport\"
+		    ],
+		    \"ChainNodes\": [
+		        \"mwss://$ip:$outport\"" >>$gost_conf_path	
+    elif [ "$model" == "relaytls" ]; then
+      echo "                \"tcp://:$inport\",
+                \"udp://:$inport\"
+            ],
+            \"ChainNodes\": [
+                \"relay+tls://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "relayws" ]; then
+      echo "                \"tcp://:$inport\",
+	            \"udp://:$inport\"
+	        ],
+	        \"ChainNodes\": [
+	            \"relay+ws://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "relaywss" ]; then
+      echo "                \"tcp://:$inport\",
+		        \"udp://:$inport\"
+		    ],
+		    \"ChainNodes\": [
+		        \"relay+wss://$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "relaymws" ]; then
+      echo "                \"tcp://:$inport\",
+		        \"udp://:$inport\"
+		    ],
+		    \"ChainNodes\": [
+		        \"relay+mws://$ip:$outport\"" >>$gost_conf_path	
+    elif [ "$model" == "relaymwss" ]; then
+      echo "                \"tcp://:$inport\",
+		        \"udp://:$inport\"
+		    ],
+		    \"ChainNodes\": [
+		        \"relay+mwss://$ip:$outport\"" >>$gost_conf_path		        	        	        
+    elif [ "$model" == "peertls" ]; then
+      echo "                \"tcp://:$inport\",
+                \"udp://:$inport\"
+            ],
+            \"ChainNodes\": [
+                \"relay+tls://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+    elif [ "$model" == "peerws" ]; then
+      echo "                \"tcp://:$inport\",
+                \"udp://:$inport\"
+            ],
+            \"ChainNodes\": [
+                \"relay+ws://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+    elif [ "$model" == "peerwss" ]; then
+      echo "                \"tcp://:$inport\",
+                \"udp://:$inport\"
+            ],
+            \"ChainNodes\": [
+                \"relay+wss://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+    elif [ "$model" == "decrypttls" ]; then
+      echo "                \"relay+tls://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "decryptws" ]; then
+      echo "        		  \"relay+ws://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "decryptwss" ]; then
+      echo "        		  \"relay+wss://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "ss" ]; then
+      echo "        \"ss://$ip:$inport@:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "socks" ]; then
+      echo "        \"socks5://$ip:$inport@:$outport\"" >>$gost_conf_path
+    else
+      echo -e"${Red_font_prefix}配置发生错误！${Font_color_suffix}"
+    fi
+  else
+    echo -e"${Red_font_prefix}配置发生错误！${Font_color_suffix}"
+    exit
+  fi
+}
+
+#写入配置
+Set_Config() {
+  count_line=$(awk 'END{print NR}' $raw_conf_path)
+  for ((i = 1; i <= $count_line; i++)); do
+    if [ $i -eq 1 ]; then
+      trans_conf=$(sed -n "${i}p" $raw_conf_path)
+      eachconf_retrieve
+      method
+    elif [ $i -gt 1 ]; then
+      if [ $i -eq 2 ]; then
+        echo "    ],
+    \"Routes\": [" >>$gost_conf_path
+        trans_conf=$(sed -n "${i}p" $raw_conf_path)
+        eachconf_retrieve
+        multiconfstart
+        method
+        multiconflast
+      else
+        trans_conf=$(sed -n "${i}p" $raw_conf_path)
+        eachconf_retrieve
+        multiconfstart
+        method
+        multiconflast
+      fi
+    fi
+  done
+}
+
 #查看规则
 Check_Gost(){
 
@@ -240,12 +527,26 @@ Check_Gost(){
 
     if [ "$model" == "tcpudp" ]; then
       str="不加密中转"
-    elif [ "$model" == "encrypttls" ]; then
+    elif [ "$model" == "tls" ]; then
       str=" tls隧道 "
-    elif [ "$model" == "encryptws" ]; then
+    elif [ "$model" == "ws" ]; then
       str="  ws隧道 "
-    elif [ "$model" == "encryptwss" ]; then
+    elif [ "$model" == "wss" ]; then
       str=" wss隧道 "
+    elif [ "$model" == "mws" ]; then
+      str="  mws隧道 "
+    elif [ "$model" == "mwss" ]; then
+      str=" mwss隧道 "
+    elif [ "$model" == "relaytls" ]; then
+      str=" relay+tls隧道 "
+    elif [ "$model" == "relayws" ]; then
+      str=" relay+ws隧道 "
+    elif [ "$model" == "relaywss" ]; then
+      str=" relay+wss隧道 "
+    elif [ "$model" == "relaymws" ]; then
+      str=" relay+mws隧道 "
+    elif [ "$model" == "relaymwss" ]; then
+      str=" relay+mwss隧道 "           
     elif [ "$model" == "peerno" ]; then
       str=" 不加密均衡负载 "
     elif [ "$model" == "peertls" ]; then
@@ -269,6 +570,8 @@ Check_Gost(){
     echo -e "\033[30m‖    $i   ‖\t$str\t‖\t$inport\t‖\t$ip\t:\t$outport\t\t\\033[30m‖"
     echo -e "\033[30m≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡\033[0m"
   done
+  read -p "输入任意键按回车返回主菜单"
+  start_menu
 }
 
 #选择转发方式
@@ -276,11 +579,11 @@ Choice_Rules(){
   clear
   echo -e "#############################${Green_font_prefix}  请选择转发方式: ${Font_color_suffix}############################"
   echo -e "#####################################"  "#####################################"
-  echo -e "#  1. tcp+udp流量转发, 不带加密     #"  "#  2. 隧道流量转发                  #" 
+  echo -e "#  1. tcp+udp流量转发, 不带加密     #"  "#  2. 隧道流量加密转发                #" 
   echo -e "#  说明:类似iptables,在中转机执行   #"  "#  说明:该选项在落地机执行          #"
   echo -e "#####################################"  "#####################################"
   echo -e "#####################################"  "#####################################"
-  echo -e "#  3. 隧道流量二次转发              #"  "#  4. 一键安装ss/socks5代理         #" 
+  echo -e "#  3. 隧道流量解密转发              #"  "#  4. 一键安装ss/socks5代理         #" 
   echo -e "#  说明:该选项在中转机执行          #"  "#  说明:使用gost内置的代理协议      #"
   echo -e "#####################################"  "#####################################"
   echo -e "###########################################################################" 
@@ -317,7 +620,12 @@ Choice_Rules
 #更新脚本
 Update_Shell(){
 	echo -e "当前版本为 [ ${sh_ver} ]，开始检测最新版本..."
+	cp /etc/resolv.conf /etc/resolv.conf.bak
+	echo 'nameserver 8.8.8.8' > /etc/resolv.conf
 	sh_new_ver=$(wget --no-check-certificate -qO- "https://raw.githubusercontent.com/seal0207/RelaxGost/main/relaxgost.sh"|grep 'sh_ver="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1)
+	rm -f /etc/resolv.conf
+	cp /etc/resolv.conf.bak /etc/resolv.conf
+	rm -f /etc/resolv.conf.bak
 	[[ -z ${sh_new_ver} ]] && echo -e "${Error} 检测最新版本失败 !" && start_menu
 	if [[ ${sh_new_ver} != ${sh_ver} ]]; then
 		echo -e "发现新版本[ ${sh_new_ver} ]，是否更新？[Y/n]"
@@ -332,6 +640,7 @@ Update_Shell(){
 	else
 		echo -e "当前已是最新版本[ ${sh_new_ver} ] !"
 		sleep 3s
+		start_menu
 	fi
 }
 
@@ -361,7 +670,8 @@ echo -e "
 ‖ ${Green_font_prefix}10.${Font_color_suffix} 退出 Gost 脚本     ‖"
  check_status
 
-read -p " 请输入数字后[0-10] 按回车键:" num
+read -p "请输入数字后[0-10]按回车键:
+" num
 case "$num" in
 	0)
 	Update_Shell
@@ -398,10 +708,11 @@ case "$num" in
 	;;
 	*)	
 	clear
-	echo -e "${Error}:请输入正确数字 [0-10] 按回车键"
+	echo -e "${Error}:请输入正确数字[0-10]按回车键"
 	sleep 2s
 	start_menu
 	;;
 esac
+echo
 }
 start_menu
