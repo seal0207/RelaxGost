@@ -150,7 +150,7 @@ Restart_Gost(){
 
 #写入查询配置
 Write_rawconf() {
-  echo $model"/""$tcpudp_outport""#""$tcpudp_ip""#""$tcpudp_inport" >> $raw_conf_path
+  echo $model"/""$outport""#""$ip""#""$inport" >> $raw_conf_path
 }
 
 #tcpudp转发
@@ -161,20 +161,58 @@ tcpudp(){
   echo -e "#############################################################"
   echo -e "#    1.需要进行流量转的发本机端口(说白了就是你的梯子端口):  #"
   echo -e "#############################################################"
-  read -p "请输入端口: " tcpudp_outport
-  if  [ $tcpudp_outport -gt $a ] && [ $tcpudp_outport -le $b ]; then
+  read -p "请输入端口: " outport
+  if  [ $outport -gt $a ] && [ $outport -le $b ]; then
   clear
   echo -e "#############################################################"
   echo -e "#    2.输入IP地址,可以是本机内网外地址，默认127.0.0.1       #"
   echo -e "#############################################################"
-  read -p "请输入本机地址(默认:127.0.0.1) : " tcpudp_ip
-  [ -z "${tcpudp_ip}" ]  && tcpudp_ip=127.0.0.1
+  read -p "请输入本机地址(默认:127.0.0.1) : " ip
+  [ -z "${ip}" ]  && ip=127.0.0.1
   clear
   echo -e "#############################################################"
   echo -e "#    3.对选项1进行流量转发的端口:                           #"
   echo -e "#############################################################"
-  read -p "请输入端口: " tcpudp_inport
-  if [ $tcpudp_inport -gt $a ] && [ $tcpudp_inport -le $b ]; then
+  read -p "请输入端口: " inport
+  if [ $inport -gt $a ] && [ $inport -le $b ]; then
+  Write_rawconf
+  rm -rf /etc/gost/config.json
+  Conf_start
+  Set_Config
+  conflast
+  systemctl restart gost
+  echo -e "${Green_font_prefix} 添加成功！ ${Font_color_suffix}"
+  sleep 2s
+  start_menu
+  fi
+  else
+  echo -e "${Red_font_prefix} 输入错误请重新输入！ ${Font_color_suffix}"
+  sleep 2s
+  tcpudp
+  fi
+}
+
+gostconf(){
+  a=0
+  b=65535
+  clear
+  echo -e "#############################################################"
+  echo -e "#    1.需要进行流量转的发本机端口(说白了就是你的梯子端口):  #"
+  echo -e "#############################################################"
+  read -p "请输入端口: " outport
+  if  [ $outport -gt $a ] && [ $outport -le $b ]; then
+  clear
+  echo -e "#############################################################"
+  echo -e "#    2.输入IP地址,可以是本机内网外地址，默认127.0.0.1       #"
+  echo -e "#############################################################"
+  read -p "请输入本机地址(默认:127.0.0.1) : " ip
+  [ -z "${ip}" ]  && ip=127.0.0.1
+  clear
+  echo -e "#############################################################"
+  echo -e "#    3.对选项1进行流量转发的端口:                           #"
+  echo -e "#############################################################"
+  read -p "请输入端口: " inport
+  if [ $inport -gt $a ] && [ $inport -le $b ]; then
   Write_rawconf
   rm -rf /etc/gost/config.json
   Conf_start
@@ -225,7 +263,7 @@ outgost(){
     sleep 2s
     outgost
   fi
-  tcpudp
+  gostconf
 }
 
 #赋值
@@ -528,46 +566,46 @@ Check_Gost(){
     if [ "$model" == "tcpudp" ]; then
       str="不加密中转"
     elif [ "$model" == "tls" ]; then
-      str=" tls隧道 "
+      str="tls隧道 "
     elif [ "$model" == "ws" ]; then
-      str="  ws隧道 "
+      str="ws隧道 "
     elif [ "$model" == "wss" ]; then
-      str=" wss隧道 "
+      str="wss隧道 "
     elif [ "$model" == "mws" ]; then
-      str="  mws隧道 "
+      str="mws隧道 "
     elif [ "$model" == "mwss" ]; then
-      str=" mwss隧道 "
+      str="mwss隧道 "
     elif [ "$model" == "relaytls" ]; then
-      str=" relay+tls隧道 "
+      str="relay+tls隧道 "
     elif [ "$model" == "relayws" ]; then
-      str=" relay+ws隧道 "
+      str="relay+ws隧道 "
     elif [ "$model" == "relaywss" ]; then
-      str=" relay+wss隧道 "
+      str="relay+wss隧道 "
     elif [ "$model" == "relaymws" ]; then
-      str=" relay+mws隧道 "
+      str="relay+mws隧道 "
     elif [ "$model" == "relaymwss" ]; then
-      str=" relay+mwss隧道 "           
+      str="relay+mwss隧道 "           
     elif [ "$model" == "peerno" ]; then
-      str=" 不加密均衡负载 "
+      str="不加密均衡负载 "
     elif [ "$model" == "peertls" ]; then
-      str=" tls隧道均衡负载 "
+      str="tls隧道均衡负载 "
     elif [ "$model" == "peerws" ]; then
-      str="  ws隧道均衡负载 "
+      str="ws隧道均衡负载 "
     elif [ "$modelt" == "peerwss" ]; then
-      str=" wss隧道均衡负载 "
+      str="wss隧道均衡负载 "
     elif [ "$model" == "decrypttls" ]; then
-      str=" tls解密 "
+      str="tls解密 "
     elif [ "$model" == "decryptws" ]; then
-      str="  ws解密 "
+      str="ws解密 "
     elif [ "$model" == "decryptwss" ]; then
-      str=" wss解密 "
+      str="wss解密 "
     elif [ "$model" == "ss" ]; then
-      str="   ss   "
+      str=" ss "
     elif [ "$model" == "socks" ]; then
-      str=" socks5 "
+      str="socks5 "
     fi
 
-    echo -e "\033[30m‖    $i   ‖\t$str\t‖\t$inport\t‖\t$ip\t:\t$outport\t\t\\033[30m‖"
+    echo -e "\033[30m‖    $i   ‖\t$str\t‖\t$inport\t‖\t$ip\t:\t    $outport\t\t\\033[30m‖"
     echo -e "\033[30m≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡\033[0m"
   done
   read -p "输入任意键按回车返回主菜单"
