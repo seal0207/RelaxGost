@@ -716,7 +716,13 @@ Check_Gost(){
 #删除Gost规则
 Delete_Gost(){
   Check_Gost
-  read -p "请输入你要删除的配置编号：" numdelete
+  echo -e "${Red_font_prefix} 注意！直接回车清空所有规则！${Font_color_suffix}" 
+  read -p " 删除请输入编号回车，输入x返回主菜单。" numd
+  if [ "$numd" == "x" ]; then
+  start_menu
+  elif [ "$numd" == "X" ]; then
+  start_menu
+  else
   sed -i "${numdelete}d" $raw_conf_path
   rm -rf /etc/gost/config.json
   Conf_start
@@ -728,9 +734,45 @@ Delete_Gost(){
   echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
   sleep 2s
   clear
-  Check_Gost
-  read -p "输入任意键按回车返回主菜单"
-  start_menu
+  Delete_Gost
+  fi
+}
+
+#配置SS_SOCK5
+socks(){
+    read -p "请输入socks用户名" ip
+    read -p "请输入socks密码" inport
+    read -p "请输入socks端口" outport
+    Write_rawconf
+    rm -rf /etc/gost/config.json
+    Conf_start
+    Set_Config
+    conflast
+    systemctl restart gost
+    echo -e "${Green_font_prefix} 添加成功！Gost服务已重启~${Font_color_suffix}"
+    sleep 2s
+    start_menu
+}
+
+ss_socks5(){
+  clear
+  echo -e "\\033[0;33m请选择代理类型: \033[0m"
+  echo -e "\\033[0;35m###########################################################################"
+  echo -e "#    1.shadowsocks                                                        #"                                                         
+  echo -e "#    2.socks5(强烈建议加隧道用于Telegram代理)                             #"
+  echo -e "###########################################################################\033[0m"
+  read -p "请选择代理类型: " numproxy
+  if [ "$numproxy" == "1" ]; then
+    model="ss"
+    ss
+  elif [ "$numproxy" == "2" ]; then
+    model="socks"
+    socks
+  else
+    echo "输入错误, 请重新输入！"
+    sleep 2s
+    ss_socks5
+  fi
 }
 
 #选择转发方式
