@@ -39,7 +39,7 @@ User=root
 Restart=always
 RestartSec=5
 DynamicUser=true
-ExecStart=/etc/gost -c /etc/gost/config.json
+ExecStart=/etc/gost/gost -C /etc/gost/config.json
 
 [Install]
 WantedBy=multi-user.target' > /etc/systemd/system/gost.service
@@ -52,6 +52,7 @@ echo '
         "udp://127.0.0.1:8848"
     ]
 }' > /etc/gost/config.json
+systemctl daemon-reload
 }
 
 #检测安装是否成功
@@ -75,6 +76,7 @@ start_menu
 Install_Gost(){
   if test -a /etc/gost;then
   rm -rf /etc/gost
+  rm -rf gost-linux-amd64-2.11.1.gz
   mkdir /etc/gost
   wget --no-check-certificate https://gotunnel.oss-cn-shenzhen.aliyuncs.com/gost-linux-amd64-2.11.1.gz && gzip -d gost-linux-amd64-2.11.1.gz && mv gost-linux-amd64-2.11.1 /etc/gost/gost && chmod +x /etc/gost/gost
   Service_Config_Gost
@@ -82,6 +84,7 @@ Install_Gost(){
   Success_Gost
   systemctl enable --now gost
   else
+  rm -rf gost-linux-amd64-2.11.1.gz
   mkdir /etc/gost 
   wget --no-check-certificate https://gotunnel.oss-cn-shenzhen.aliyuncs.com/gost-linux-amd64-2.11.1.gz && gzip -d gost-linux-amd64-2.11.1.gz && mv gost-linux-amd64-2.11.1 /etc/gost/gost && chmod +x /etc/gost/gost
   Service_Config_Gost
@@ -159,7 +162,7 @@ tcpudp(){
   b=65535
   clear
   echo -e "#############################################################"
-  echo -e "#    1.输入远程进行流量转发的端口(说白了就是你的梯子端口)    #"
+  echo -e "#    1.输入远程进行流量转发的端口(说白了就是你的梯子端口)   #"
   echo -e "#############################################################"
   read -p "请输入端口: " outport
   if  [ $outport -gt $a ] && [ $outport -le $b ]; then
@@ -183,6 +186,8 @@ tcpudp(){
   echo -e "${Green_font_prefix} 添加成功！ ${Font_color_suffix}"
   sleep 2s
   Check_Gost
+  read -p "输入任意键按回车返回主菜单"
+  start_menu
   fi
   else
   echo -e "${Red_font_prefix} 输入错误请重新输入！ ${Font_color_suffix}"
@@ -194,16 +199,19 @@ tcpudp(){
 gostoutconf(){
   a=0
   b=65535
-  ip=127.0.0.1
   clear
   echo -e "#############################################################"
-  echo -e "#    请设置隧道端口                                         #"
+  echo -e "#    请设置落地机隧道端口                                   #"
   echo -e "#############################################################"
   read -p "请输入端口: " outport
   if  [ $outport -gt $a ] && [ $outport -le $b ]; then
+  echo -e "#############################################################"
+  echo -e "#    请输入落地机的域名或IP地址                             #"
+  echo -e "#############################################################"
+  read -p "请输入域名或IP地址: " ip   
   clear
   echo -e "#############################################################"
-  echo -e "#    请输入隧道监听的端口                                   #"
+  echo -e "#    请设置本地转发端口                                     #"
   echo -e "#############################################################"
   read -p "请输入端口: " inport
   if [ $inport -gt $a ] && [ $inport -le $b ]; then
@@ -216,31 +224,29 @@ gostoutconf(){
   echo -e "${Green_font_prefix} 添加成功！ ${Font_color_suffix}"
   sleep 2s
   Check_Gost
+  read -p "输入任意键按回车返回主菜单"
+  start_menu
   fi
   else
   echo -e "${Red_font_prefix} 输入错误请重新输入！ ${Font_color_suffix}"
   sleep 2s
-  tcpudp
+  gostoutconf
   fi
 }
 
 gostinconf(){
   a=0
   b=65535
+  ip=127.0.0.1
   clear
   echo -e "#############################################################"
-  echo -e "#    请输入在落地机端设置的隧道端口                           #"
+  echo -e "#    请输入在落地机要监听转发的端口                         #"
   echo -e "#############################################################"
   read -p "请输入端口: " outport
   if  [ $outport -gt $a ] && [ $outport -le $b ]; then
   clear
   echo -e "#############################################################"
-  echo -e "#    请输入落地机的域名或IP地址                             #"
-  echo -e "#############################################################"
-  read -p "请输入域名或IP地址: " ip    
-  clear
-  echo -e "#############################################################"
-  echo -e "#    请输入本地转发端口                                      #"
+  echo -e "#    请输入所设置落地机隧道端口                             #"
   echo -e "#############################################################"
   read -p "请输入端口: " inport
   if [ $inport -gt $a ] && [ $inport -le $b ]; then
@@ -253,11 +259,13 @@ gostinconf(){
   echo -e "${Green_font_prefix} 添加成功！ ${Font_color_suffix}"
   sleep 2s
   Check_Gost
+  read -p "输入任意键按回车返回主菜单"
+  start_menu
   fi
   else
   echo -e "${Red_font_prefix} 输入错误请重新输入！ ${Font_color_suffix}"
   sleep 2s
-  tcpudp
+  gostinconf
   fi
 }
 
@@ -383,31 +391,31 @@ method() {
         \"udp://:$inport\"
     ],
     \"ChainNodes\": [
-        \"tls://$ip:$outport\"" >>$gost_conf_path
+        \"forward+tls://$ip:${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "ws" ]; then
       echo "        \"tcp://:$inport\",
     	\"udp://:$inport\"
 	],
 	\"ChainNodes\": [
-    	\"ws://$ip:$outport\"" >>$gost_conf_path
+    	\"forward+ws://$ip:${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "wss" ]; then
       echo "        \"tcp://:$inport\",
 		\"udp://:$inport\"
 	],
 	\"ChainNodes\": [
-		\"wss://$ip:$outport\"" >>$gost_conf_path
+		\"forward+wss://$ip:${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "mws" ]; then
       echo "        \"tcp://:$inport\",
 		\"udp://:$inport\"
 	],
 	\"ChainNodes\": [
-		\"mws://$ip:$outport\"" >>$gost_conf_path
+		\"forward+mws://$ip:${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "mwss" ]; then
       echo "        \"tcp://:$inport\",
 		\"udp://:$inport\"
 	],
 	\"ChainNodes\": [
-		\"mwss://$ip:$outport\"" >>$gost_conf_path
+		\"forward+mwss://$ip:${outport}?mbind\"" >>$gost_conf_path
 
     elif [ "$model" == "relaytls" ]; then
       echo "        \"tcp://:$inport\",
@@ -496,31 +504,31 @@ method() {
                 \"udp://:$inport\"
             ],
             \"ChainNodes\": [
-                \"tls://$ip:$outport\"" >>$gost_conf_path
+                \"forward+tls://$ip:${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "ws" ]; then
       echo "                \"tcp://:$inport\",
 	            \"udp://:$inport\"
 	        ],
 	        \"ChainNodes\": [
-	            \"ws://$ip:$outport\"" >>$gost_conf_path
+	            \"forward+ws://$ip:${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "wss" ]; then
       echo "                \"tcp://:$inport\",
 		        \"udp://:$inport\"
 		    ],
 		    \"ChainNodes\": [
-		        \"wss://$ip:$outport\"" >>$gost_conf_path
+		        \"forward+wss://$ip:${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "mws" ]; then
       echo "                \"tcp://:$inport\",
 		        \"udp://:$inport\"
 		    ],
 		    \"ChainNodes\": [
-		        \"mws://$ip:$outport\"" >>$gost_conf_path	
+		        \"forward+mws://$ip:${outport}?mbind\"" >>$gost_conf_path	
     elif [ "$model" == "mwss" ]; then
       echo "                \"tcp://:$inport\",
 		        \"udp://:$inport\"
 		    ],
 		    \"ChainNodes\": [
-		        \"mwss://$ip:$outport\"" >>$gost_conf_path	
+		        \"forward+mwss://$ip:${outport}?mbind\"" >>$gost_conf_path	
     elif [ "$model" == "relaytls" ]; then
       echo "                \"tcp://:$inport\",
                 \"udp://:$inport\"
@@ -571,15 +579,15 @@ method() {
                 \"relay+wss://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
                 
     elif [ "$model" == "detls" ]; then
-      echo "                \"tls://:$inport/$ip:$outport\"" >>$gost_conf_path
+      echo "                \"tls://:$inport/$ip:${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "dews" ]; then
-      echo "        		  \"ws://:$inport/$ip:$outport\"" >>$gost_conf_path
+      echo "        		  \"ws://:$inport/$ip:${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "dewss" ]; then
-      echo "        		  \"wss://:$inport/$ip:$outport\"" >>$gost_conf_path
+      echo "        		  \"wss://:$inport/$ip:${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "demws" ]; then
-      echo "        		  \"mws://:$inport/$ip:$outport\"" >>$gost_conf_path
+      echo "        		  \"mws://:$inport/$ip:${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "demwss" ]; then
-      echo "        		  \"mwss://:$inport/$ip:$outport\"" >>$gost_conf_path
+      echo "        		  \"mwss://:$inport/$ip:${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "derelaytls" ]; then
       echo "                \"relay+tls://:$inport/$ip:$outport\"" >>$gost_conf_path
     elif [ "$model" == "derelayws" ]; then
@@ -703,6 +711,24 @@ Check_Gost(){
     echo -e "\033[30m‖    $i   ‖\t$str\t‖\t$inport\t‖\t\t$ip:$outport\\033[30m"
     echo -e "\033[30m≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡\033[0m"
   done
+}
+
+#删除Gost规则
+Delete_Gost(){
+  Check_Gost
+  read -p "请输入你要删除的配置编号：" numdelete
+  sed -i "${numdelete}d" $raw_conf_path
+  rm -rf /etc/gost/config.json
+  Conf_start
+  Set_Config
+  conflast
+  systemctl restart gost
+  echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
+  echo -e "≡≡ ${Green_font_prefix} 配置已删除，服务已重启~ ${Font_color_suffix}≡≡"
+  echo "≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡"
+  sleep 2s
+  clear
+  Check_Gost
   read -p "输入任意键按回车返回主菜单"
   start_menu
 }
@@ -712,11 +738,11 @@ Choice_Rules(){
   clear
   echo -e "\\033[0;35m#############################\\033[0;33m  请选择转发方式: \033[0m\\033[0;35m############################"
   echo -e "###########################################################################" 
-  echo -e "#  1. tcp+udp流量转发, 不带加密     #"  "#  2. 隧道流量转发                  #" 
-  echo -e "#  说明:类似iptables,在中转机执行   #"  "#  说明:该选项在落地机执行          #"
+  echo -e "#  1. tcp+udp流量转发, 不带加密     #"  "#  2. 隧道流量解密转发              #" 
+  echo -e "#  说明:类似iptables,在中转机执行   #"  "#  说明:该选项在中转机执行          #"
   echo -e "###########################################################################" 
-  echo -e "#  3. 隧道流量解密转发              #"  "#  4. 一键安装ss/socks5代理         #" 
-  echo -e "#  说明:该选项在中转机执行          #"  "#  说明:使用gost内置的代理协议      #"
+  echo -e "#  3. 隧道流量转发                 #"  "#  4. 一键安装ss/socks5代理          #" 
+  echo -e "#  说明:该选项在落地机执行         #"  "#  说明:使用gost内置的代理协议       #"
   echo -e "###########################################################################" 
   echo -e "#                      5. 进阶：多落地均衡负载                            #"                   
   echo -e "#                    说明: 支持各种加密方式的简单均衡负载                 #"
@@ -827,6 +853,8 @@ case "$num" in
 	;;
 	7)
 	Check_Gost
+	read -p "输入任意键按回车返回主菜单"
+     start_menu
 	;;
 	8)
 	Delete_Gost
