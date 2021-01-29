@@ -1072,6 +1072,46 @@ Update_Shell(){
 	fi
 }
 
+#定时任务
+Restart_Task(){
+echo -e "------------------------------------------------------------------"
+    echo -e "gost定时重启任务: "
+    echo -e "-----------------------------------"
+    echo -e "[1] 配置gost定时重启任务"
+    echo -e "[2] 删除gost定时重启任务"
+    echo -e "-----------------------------------"
+    read -p "请选择: " numcron
+    if [ "$numcron" == "1" ]; then
+        echo -e "------------------------------------------------------------------"
+        echo -e "gost定时重启任务类型: "
+        echo -e "-----------------------------------"
+        echo -e "[1] 每*小时重启"
+        echo -e "[2] 每日*点重启"
+        echo -e "-----------------------------------"
+        read -p "请选择: " numcrontype
+        if [ "$numcrontype" == "1" ]; then
+            echo -e "-----------------------------------"
+            read -p "每*小时重启: " cronhr
+            echo "0 0 */$cronhr * * ? * systemctl restart gost" >>/var/spool/cron/crontabs/root
+            echo -e "定时重启设置成功！"
+        elif [ "$numcrontype" == "2" ]; then
+            echo -e "-----------------------------------"
+            read -p "每日*点重启: " cronhr
+            echo "0 0 $cronhr * * ? systemctl restart gost" >>/var/spool/cron/crontabs/root
+            echo -e "定时重启设置成功！"
+        else
+            echo "输入错误，请重新输入！"
+            exit
+        fi
+    elif [ "$numcron" == "2" ]; then
+      sed -i "/gost/d" /var/spool/cron/crontabs/root
+      echo -e "定时重启任务删除完成！"
+    else
+      echo "输入错误，请重新输入！"
+      exit
+    fi
+}
+
 #主菜单
 start_menu(){
 clear
