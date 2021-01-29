@@ -558,26 +558,70 @@ method() {
 		        \"udp://:$inport\"
 		    ],
 		    \"ChainNodes\": [
-		        \"relay+mwss://$ip:$outport\"" >>$gost_conf_path		        	        	        
+		        \"relay+mwss://$ip:$outport\"" >>$gost_conf_path	
+#负载均衡配置
     elif [ "$model" == "peertls" ]; then
       echo "                \"tcp://:$inport\",
                 \"udp://:$inport\"
             ],
             \"ChainNodes\": [
-                \"relay+tls://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+                \"forward+tls://:?ip=/root/$ip.txt&strategy=${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "peerws" ]; then
       echo "                \"tcp://:$inport\",
                 \"udp://:$inport\"
             ],
             \"ChainNodes\": [
-                \"relay+ws://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+                \"forward+ws://:?ip=/root/$ip.txt&strategy=${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "peerwss" ]; then
       echo "                \"tcp://:$inport\",
                 \"udp://:$inport\"
             ],
             \"ChainNodes\": [
+                \"forward+wss://:?ip=/root/$ip.txt&strategy=${outport}?mbind\"" >>$gost_conf_path
+    elif [ "$model" == "peermws" ]; then
+      echo "                \"tcp://:$inport\",
+                \"udp://:$inport\"
+            ],
+            \"ChainNodes\": [
+                \"forward+mws://:?ip=/root/$ip.txt&strategy=${outport}?mbind\"" >>$gost_conf_path
+    elif [ "$model" == "peermwws" ]; then
+      echo "                \"tcp://:$inport\",
+                \"udp://:$inport\"
+            ],
+            \"ChainNodes\": [
+                \"forward+mwss://:?ip=/root/$ip.txt&strategy=${outport}?mbind\"" >>$gost_conf_path
+		        	        	        	        
+    elif [ "$model" == "peerrelaytls" ]; then
+      echo "                \"tcp://:$inport\",
+                \"udp://:$inport\"
+            ],
+            \"ChainNodes\": [
+                \"relay+tls://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+    elif [ "$model" == "peerrelayws" ]; then
+      echo "                \"tcp://:$inport\",
+                \"udp://:$inport\"
+            ],
+            \"ChainNodes\": [
+                \"relay+ws://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+    elif [ "$model" == "peerrelaywss" ]; then
+      echo "                \"tcp://:$inport\",
+                \"udp://:$inport\"
+            ],
+            \"ChainNodes\": [
                 \"relay+wss://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
-                
+    elif [ "$model" == "peerrelaymws" ]; then
+      echo "                \"tcp://:$inport\",
+                \"udp://:$inport\"
+            ],
+            \"ChainNodes\": [
+                \"relay+mws://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+    elif [ "$model" == "peerrelaymwss" ]; then
+      echo "                \"tcp://:$inport\",
+                \"udp://:$inport\"
+            ],
+            \"ChainNodes\": [
+                \"relay+mwss://:?ip=/root/$ip.txt&strategy=$outport\"" >>$gost_conf_path
+                                
     elif [ "$model" == "detls" ]; then
       echo "                \"tls://:$inport/$ip:${outport}?mbind\"" >>$gost_conf_path
     elif [ "$model" == "dews" ]; then
@@ -716,14 +760,15 @@ Check_Gost(){
 #删除Gost规则
 Delete_Gost(){
   Check_Gost
-  echo -e "${Red_font_prefix} 注意！直接回车清空所有规则！${Font_color_suffix}" 
-  read -p " 删除请输入编号回车，输入x返回主菜单。" numd
+  read -p "删除请输入编号回车，输入x返回主菜单。" numd
   if [ "$numd" == "x" ]; then
   start_menu
   elif [ "$numd" == "X" ]; then
   start_menu
+  elif [ "$numd" == "" ]; then
+  start_menu
   else
-  sed -i "${numdelete}d" $raw_conf_path
+  sed -i "${numd}d" $raw_conf_path
   rm -rf /etc/gost/config.json
   Conf_start
   Set_Config
@@ -739,10 +784,73 @@ Delete_Gost(){
 }
 
 #配置SS_SOCK5
+ss(){
+    read -p "请设置ss密码:" inport
+    read -p "请设置ss端口:" outport
+    echo -e "\033[0m"    
+    Write_rawconf
+    rm -rf /etc/gost/config.json
+    Conf_start
+    Set_Config
+    conflast
+    systemctl restart gost
+    echo -e "${Green_font_prefix} 添加成功！Gost服务已重启~${Font_color_suffix}"
+    sleep 2s
+    start_menu
+}
+
+ss_menu(){
+    echo -e "\\033[0;35m请选择加密方式："
+    echo -e "[1] aes-128-cfb"
+    echo -e "[2] aes-256-cfb"
+    echo -e "[3] aes-128-gcm"
+    echo -e "[4] aes-256-gcm"
+    echo -e "[5] chacha20"
+    echo -e "[6] chacha20-ietf"
+    echo -e "[7] chacha20-ietf-poly1305"
+    echo -e "[8] rc4-md5(不推荐)"
+    echo -e "[9] AEAD_CHACHA20_POLY1305(Shadowsocks2才支持，不明白别选)"          
+    read -p "请设置ss加密方式:" ip
+  if [ "$ip" == "1" ]; then
+    ip="aes-128-cfb"
+    ss
+  elif [ "$ip" == "2" ]; then
+    ip="aes-256-cfb"
+    ss
+  elif [ "$ip" == "3" ]; then
+    ip="aes-128-gcm"
+    ss
+  elif [ "$ip" == "4" ]; then
+    ip="aes-256-gcm"
+    ss
+  elif [ "$ip" == "5" ]; then
+    ip="chacha20"   
+    ss  
+  elif [ "$ip" == "6" ]; then
+    ip="chacha20-ietf" 
+    ss  
+  elif [ "$ip" == "7" ]; then
+    ip="chacha20-ietf-poly1305" 
+    ss  
+  elif [ "$ip" == "8" ]; then
+    ip="rc4-md5"  
+    ss
+  elif [ "$ip" == "9" ]; then
+    ip="AEAD_CHACHA20_POLY1305"
+    ss                
+  else
+    echo -e "输入错误，请重新输入~\033[0m"  
+    sleep 2s
+    ss_menu
+  fi
+}
+
 socks(){
-    read -p "请输入socks用户名" ip
-    read -p "请输入socks密码" inport
-    read -p "请输入socks端口" outport
+    echo -e "\\033[0;35m"
+    read -p "请输入socks用户名:" ip
+    read -p "请输入socks密码:" inport
+    read -p "请输入socks端口:" outport
+    echo -e "\033[0m"    
     Write_rawconf
     rm -rf /etc/gost/config.json
     Conf_start
@@ -764,7 +872,7 @@ ss_socks5(){
   read -p "请选择代理类型: " numproxy
   if [ "$numproxy" == "1" ]; then
     model="ss"
-    ss
+    ss_menu
   elif [ "$numproxy" == "2" ]; then
     model="socks"
     socks
@@ -773,6 +881,116 @@ ss_socks5(){
     sleep 2s
     ss_socks5
   fi
+}
+#简单负载均衡
+Load_Balancing(){
+echo -e "请设置的均衡负载传输类型: "
+  echo -e "-----------------------------------"
+  echo -e "[1]  不加密转发"
+  echo -e "[2]  普通tls隧道"
+  echo -e "[3]  普通ws隧道"
+  echo -e "[4]  普通wss隧道"
+  echo -e "[5]  普通mws隧道"
+  echo -e "[6]  普通mwss隧道" 
+  echo -e "[7]  Relay+tls隧道"
+  echo -e "[8]  Relay+ws隧道"
+  echo -e "[9]  Relay+wss隧道"
+  echo -e "[10] Relay+mws隧道"
+  echo -e "[11] Relay+mwss隧道"    
+  echo -e "注意: 同一则转发，中转与落地传输类型必须对应！本脚本默认同一配置的传输类型相同"
+  echo -e "此脚本仅支持简单型均衡负载，具体可参考官方文档"
+  echo -e "gost均衡负载官方文档：https://docs.ginuerzh.xyz/gost/load-balancing"
+  echo -e "-----------------------------------"
+  read -p "请选择转发传输类型: " numpeer
+
+  if [ "$numpeer" == "1" ]; then
+    model="peerno"
+  elif [ "$numpeer" == "2" ]; then
+    model="peertls"
+  elif [ "$numpeer" == "3" ]; then
+    model="peerws"
+  elif [ "$numpeer" == "4" ]; then
+    model="peerwss"
+  elif [ "$numpeer" == "5" ]; then
+    model="peermws"
+  elif [ "$numpeer" == "6" ]; then
+    model="peermwss"
+  elif [ "$numpeer" == "7" ]; then
+    model="peerrelaytls"
+  elif [ "$numpeer" == "8" ]; then
+    model="peerrelayws"
+  elif [ "$numpeer" == "9" ]; then
+    model="peerrelaywss"
+  elif [ "$numpeer" == "10" ]; then
+    model="peerrelaymws"
+  elif [ "$numpeer" == "11" ]; then
+    model="peerrelaymwss"  
+  else
+    echo -e "${Red_font_prefix} 输入错误，请重新输入！${Font_color_suffix}"
+    Load_Balancing
+  fi
+}
+ipport(){
+    echo -e "请设置远程服务器端口："
+    read -p "请输入端口: " outport
+    echo -e "请设置远程服务器域名/IP："
+    read -p "请输入域名/IP: " add   
+    read -e -p "是否继续添加落地?[y/n]:" addyn
+    [[ -z ${addyn} ]] && addyn="y"
+    if [[ ${addyn} == [Nn] ]]; then
+    echo -e "$add:$outport" >>$ip.txt 
+    echo -e "${Green_font_prefix} 配置已添加！${Font_color_suffix}"
+    sleep 2s
+    else
+    echo -e "继续添加均衡负载落地配置"
+    ipport
+    fi
+}
+
+peer_menu(){
+    clear
+    echo -e "请设置保存文件的名称(譬如：aa 或者 b1,不带文件名后缀！)"
+    read -p "请输入文件名: " ip
+    touch $ip.txt
+    echo -e "请设置本地转发端口"
+    read -p "请输入端口: " inport
+    while true; do
+    echo -e "请设置远程服务器端口"
+    read -p "请输入端口: " outport
+    echo -e "请设置远程服务器域名/IP："
+    read -p "请输入域名/IP: " add
+    echo -e "$add:$outport" >>$ip.txt 
+    read -e -p "是否继续添加落地？[Y/n]:" addyn
+    [[ -z ${addyn} ]] && addyn="y"
+    if [[ ${addyn} == [Nn] ]]; then
+    echo -e "------------------------------------------------------------------"    
+    echo -e "已在root目录创建$ip.txt，手动编辑该文件修改落地信息，重启gost即可生效!"
+    break
+    else
+    echo -e "------------------------------------------------------------------"
+    echo -e "继续添加均衡负载落地配置"
+    fi
+    done
+    clear
+    echo -e "------------------------------------------------------------------"
+    echo -e "选择要设置的均衡负载策略:"
+    echo -e "-----------------------------------"
+    echo -e "[1] round - 轮询"
+    echo -e "[2] random - 随机"
+    echo -e "[3] fifo - 自上而下"
+    echo -e "-----------------------------------"
+    read -p "请选择均衡负载类型: " numstra
+
+    if [ "$numstra" == "1" ]; then
+      outport="round"
+    elif [ "$numstra" == "2" ]; then
+      outport="random"
+    elif [ "$numstra" == "3" ]; then
+      outport="fifo"
+    else
+    echo -e "${Red_font_prefix} 输入错误，请重新输入！${Font_color_suffix}"
+    peer_menu
+    fi
 }
 
 #选择转发方式
@@ -805,6 +1023,17 @@ Choice_Rules(){
   elif [ "$nummodel" == "5" ]; then
     model="Load_Balancing"
     Load_Balancing
+    peer_menu
+    
+    Write_rawconf
+    rm -rf /etc/gost/config.json
+    Conf_start
+    Set_Config
+    conflast
+    systemctl restart gost
+    echo -e "${Green_font_prefix} 添加成功！Gost服务已重启~${Font_color_suffix}"
+    sleep 2s
+    start_menu
   else
     echo -e "${Red_font_prefix} 输入错误，请重新输入！${Font_color_suffix}"
     sleep 2s
