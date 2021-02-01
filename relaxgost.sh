@@ -3,7 +3,7 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 clear
 
-sh_ver="1.0.0"
+sh_ver="1.0.1"
 Green_font_prefix="\033[32m" && Red_font_prefix="\033[31m" && Green_background_prefix="\033[42;37m" && Red_background_prefix="\033[41;37m" && Font_color_suffix="\033[0m"
 Info="${Green_font_prefix}[信息]${Font_color_suffix}"
 Error="${Red_font_prefix}[错误]${Font_color_suffix}"
@@ -475,6 +475,16 @@ method() {
       echo "        \"mws://:$inport/$ip:$outport\"" >>$gost_conf_path
     elif [ "$model" == "mwss" ]; then
       echo "        \"mwss://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "detls" ]; then
+      echo "        \"tls://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "dews" ]; then
+      echo "        \"ws://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "dewss" ]; then
+      echo "        \"wss://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "demws" ]; then
+      echo "        \"mws://:$inport/$ip:$outport\"" >>$gost_conf_path
+    elif [ "$model" == "demwss" ]; then
+      echo "        \"mwss://:$inport/$ip:$outport\"" >>$gost_conf_path  
     elif [ "$model" == "relaytls" ]; then
       echo "        \"relay+tls://:$inport/$ip:$outport\"" >>$gost_conf_path
     elif [ "$model" == "relayws" ]; then
