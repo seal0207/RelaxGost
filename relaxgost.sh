@@ -78,7 +78,7 @@ Install_Gost(){
   rm -rf /etc/gost
   rm -rf gost-linux-amd64-2.11.1.gz
   mkdir /etc/gost
-  wget --no-check-certificate https://gotunnel.oss-cn-shenzhen.aliyuncs.com/gost-linux-amd64-2.11.1.gz && gzip -d gost-linux-amd64-2.11.1.gz && mv gost-linux-amd64-2.11.1 /etc/gost/gost && chmod +x /etc/gost/gost
+  wget --no-check-certificate https://recordaily.com/soft/gost  && mv gost /etc/gost/gost && chmod +x /etc/gost/gost
   Service_Config_Gost
   chmod +x /etc/gost/config.json
   Success_Gost
@@ -86,7 +86,7 @@ Install_Gost(){
   else
   rm -rf gost-linux-amd64-2.11.1.gz
   mkdir /etc/gost 
-  wget --no-check-certificate https://gotunnel.oss-cn-shenzhen.aliyuncs.com/gost-linux-amd64-2.11.1.gz && gzip -d gost-linux-amd64-2.11.1.gz && mv gost-linux-amd64-2.11.1 /etc/gost/gost && chmod +x /etc/gost/gost
+  wget --no-check-certificate https://recordaily.com/soft/gost  && mv gost /etc/gost/gost && chmod +x /etc/gost/gost
   Service_Config_Gost
   chmod +x /etc/gost/config.json
   Success_Gost
