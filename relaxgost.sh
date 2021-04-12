@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 clear
@@ -53,6 +53,7 @@ echo '
     ]
 }' > /etc/gost/config.json
 systemctl daemon-reload
+systemctl enable gost
 }
 
 #检测安装是否成功
