@@ -47,7 +47,7 @@ WantedBy=multi-user.target' > /etc/systemd/system/gost.service
 echo '
 {
     "Debug": true,
-    "Retries": 0,
+    "Retries": 10,
     "ServeNodes": [
         "udp://127.0.0.1:8848"
     ]
@@ -356,12 +356,12 @@ eachconf_retrieve()
 Conf_start(){
 echo "{
     \"Debug\": true,
-    \"Retries\": 0,
+    \"Retries\": 10,
     \"ServeNodes\": [" >> $gost_conf_path
 }
 multiconfstart() {
   echo "        {
-            \"Retries\": 0,
+            \"Retries\": 10,
             \"ServeNodes\": [" >>$gost_conf_path
 }
 conflast() {
